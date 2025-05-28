@@ -1,0 +1,191 @@
+<mujoco model="right_shadow_hand scene">
+
+  <option cone="elliptic" impratio="10"/>
+  <compiler angle="radian" meshdir="assets" autolimits="true"/>
+
+  <default>
+    <default class="right_hand">
+      <mesh scale="0.001 0.001 0.001"/>
+      <!-- Increased damping from 0.05 to 0.2 -->
+      <joint axis="1 0 0" damping="0.2" armature="0.0002" frictionloss="0.01"/>
+      <position forcerange="-1 1"/>
+
+      <default class="wrist">
+        <joint damping="0.5"/>
+        <default class="wrist_y">
+          <joint axis="0 1 0" range="-0.523599 0.174533"/>
+          <position kp="10" ctrlrange="-0.523599 0.174533" forcerange="-10 10"/>
+        </default>
+        <default class="wrist_x">
+          <joint range="-0.698132 0.488692"/>
+          <position kp="8" ctrlrange="-0.698132 0.488692" forcerange="0 1"/>
+        </default>
+      </default>
+
+      <default class="thumb">
+        <default class="thbase">
+          <joint axis="0 0 -1" range="-1.0472 1.0472"/>
+          <position kp="0.4" ctrlrange="-1.0472 1.0472" forcerange="-3 3"/>
+        </default>
+        <default class="thproximal">
+          <joint range="0 1.22173"/>
+          <position ctrlrange="1.22173 1.22173" forcerange="-2 2"/>
+        </default>
+        <default class="thhub">
+          <joint range="-0.20944 0.20944"/>
+          <position kp="0.5" ctrlrange="-0.20944 0.20944"/>
+        </default>
+        <default class="thmiddle">
+          <joint axis="0 -1 0" range="-0.698132 0.698132"/>
+          <position kp="1.5" ctrlrange="-0.698132 0.698132"/>
+        </default>
+        <default class="thdistal">
+          <joint range="-0.261799 1.5708"/>
+          <position ctrlrange="-0.261799 1.5708"/>
+        </default>
+      </default>
+
+      <default class="metacarpal">
+        <joint axis="0.573576 0 0.819152" range="0 0.785398"/>
+        <position ctrlrange="0 0.785398"/>
+      </default>
+      <default class="knuckle">
+        <joint axis="0 -1 0" range="-0.349066 0.349066"/>
+        <position ctrlrange="-0.349066 0.349066"/>
+      </default>
+      <default class="proximal">
+        <joint range="-0.261799 1.5708"/>
+        <position ctrlrange="-0.261799 1.5708"/>
+      </default>
+      <default class="middle_distal">
+        <joint range="0 1.5708"/>
+        <position kp="0.5" ctrlrange="0 3.1415"/>
+      </default>
+
+      <default class="plastic">
+        <geom solimp="0.5 0.99 0.0001" solref="0.005 1"/>
+        <default class="plastic_visual">
+          <geom type="mesh" material="black" contype="0" conaffinity="0" group="2"/>
+        </default>
+        <default class="plastic_collision">
+          <geom group="3"/>
+        </default>
+      </default>
+    </default>
+  </default>
+
+  <statistic extent="0.3" center="0.3 0 0"/>
+
+  <visual>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <quality shadowsize="8192"/>
+    <global azimuth="220" elevation="-30"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
+      markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
+    <material name="cube_material" rgba="1 1 1 1"/> 
+    <material name="cylinder_material" rgba="0.5 0.9 0.2 1"/>
+
+    <material name="black" specular="0.5" shininess="0.25" rgba="0.16355 0.16355 0.16355 1"/>
+    <material name="gray" specular="0.0" shininess="0.25" rgba="0.80848 0.80848 0.80848 1"/>
+    <material name="metallic" specular="0" shininess="0.25" rgba="0.9 0.9 0.9 1"/>
+
+    <mesh class="right_hand" file="forearm_0.obj"/>
+    <mesh class="right_hand" file="forearm_1.obj"/>
+    <mesh class="right_hand" file="forearm_collision.obj"/>
+    <mesh class="right_hand" file="wrist.obj"/>
+    <mesh class="right_hand" file="palm.obj"/>
+    <mesh class="right_hand" file="f_knuckle.obj"/>
+    <mesh class="right_hand" file="f_proximal.obj"/>
+    <mesh class="right_hand" file="f_middle.obj"/>
+    <mesh class="right_hand" file="f_distal_pst.obj"/>
+    <mesh class="right_hand" file="lf_metacarpal.obj"/>
+    <mesh class="right_hand" file="th_proximal.obj"/>
+    <mesh class="right_hand" file="th_middle.obj"/>
+    <mesh class="right_hand" file="th_distal_pst.obj"/>
+  </asset>
+
+  <worldbody>
+    <!-- <camera name="wrist_cam" pos="0 0 0.1" euler="0 0 0" fovy="60"/> -->
+    <light pos="0 0 1"/>
+    <light pos="0.3 0 1.5" dir="0 0 -1" directional="true"/>
+    <geom name="floor" pos="0 0 -0.1" size="0 0 0.05" type="plane" material="groundplane"/>
+
+    <body name="rail" pos="0.4 0 0.0">
+      <geom type="cylinder" size="0.05 0.8" rgba="0.2 0.2 0.2 1"/>  
+      <include file="right_hand.xml"/>    
+    </body>
+            
+    <!-- Cylinder (Object) -->
+    <!-- <body name="cylinder_body" pos="0.07 -0.06 0.35" euler="0 0 0">
+      <freejoint/>
+      <geom type="cylinder" size="0.0225 0.1" material="cylinder_material"/>
+      <site name="cyl_imu" size="0.01" pos="0 0 0"/>
+      <inertial pos="0 0 0" mass="0.3" diaginertia="0.05 0.05 0.0025"/>    
+    </body> -->
+
+    <body name="soft_cylinder" pos="0.06 -0.055 0.0">
+      <freejoint/>
+      <geom type="cylinder" size="0.0225 0.1" material="cylinder_material" 
+            solimp="0.6 0.8 0.001" solref="0.005 0.5"
+            friction="0.5 0.005 0.0001" mass="1"/>
+      <site name="cyl_imu" size="0.01" pos="0 0 0"/>
+      <site name="cyl_top" size="0.01" pos="0 0 0.1"/>
+      <inertial pos="0 0 0" mass="1.0" diaginertia="0.05 0.05 0.0025"/>    
+    </body>
+
+
+  </worldbody>
+
+  <actuator>
+    <motor name="rail_to_base" joint="rail_to_base" ctrllimited="true" ctrlrange="-5000 1000"/>
+
+    <!-- <motor name="rh_THJ4" joint="rh_THJ4" gear="50" ctrllimited="true" ctrlrange="-0.02 0.02"/> -->
+    <!-- Reduced gear ratios for thumb joints -->
+    <motor name="rh_THJ2" joint="rh_THJ2" gear="20" ctrllimited="true" ctrlrange="-0.015 0.015"/>
+    <motor name="rh_THJ1" joint="rh_THJ1" gear="15" ctrllimited="true" ctrlrange="-0.01 0.01"/>
+
+    <!-- Finger joints with reduced gear ratios -->
+    <motor name="rh_FFJ3" joint="rh_FFJ3" gear="10" ctrllimited="true" ctrlrange="-0.08 0.08"/>
+    <motor name="rh_FFJ2" joint="rh_FFJ2" gear="8" ctrllimited="true" ctrlrange="-0.05 0.05"/>
+    <motor name="rh_FFJ1" joint="rh_FFJ1" gear="8" ctrllimited="true" ctrlrange="-0.05 0.05"/>
+    <motor name="rh_MFJ3" joint="rh_MFJ3" gear="10" ctrllimited="true" ctrlrange="-0.08 0.08"/>
+    <motor name="rh_MFJ2" joint="rh_MFJ2" gear="8" ctrllimited="true" ctrlrange="-0.05 0.05"/>
+    <motor name="rh_MFJ1" joint="rh_MFJ1" gear="8" ctrllimited="true" ctrlrange="-0.05 0.05"/>
+    <motor name="rh_RFJ3" joint="rh_RFJ3" gear="10" ctrllimited="true" ctrlrange="-0.08 0.08"/>
+    <motor name="rh_RFJ2" joint="rh_RFJ2" gear="8" ctrllimited="true" ctrlrange="-0.05 0.05"/>
+    <motor name="rh_RFJ1" joint="rh_RFJ1" gear="8" ctrllimited="true" ctrlrange="-0.05 0.05"/>
+    <motor name="rh_LFJ3" joint="rh_LFJ3" gear="10" ctrllimited="true" ctrlrange="-0.08 0.08"/>
+    <motor name="rh_LFJ2" joint="rh_LFJ2" gear="8" ctrllimited="true" ctrlrange="-0.05 0.05"/>
+    <motor name="rh_LFJ1" joint="rh_LFJ1" gear="8" ctrllimited="true" ctrlrange="-0.05 0.05"/>
+  </actuator>
+
+  <contact>
+    <exclude body1="rh_wrist" body2="rh_forearm"/>
+    <exclude body1="rh_thproximal" body2="rh_thmiddle"/>
+  </contact>
+
+  <tendon>
+    <fixed name="rh_FFJ0">
+      <joint joint="rh_FFJ2" coef="1"/>
+      <joint joint="rh_FFJ1" coef="1"/>
+    </fixed>
+    <fixed name="rh_MFJ0">
+      <joint joint="rh_MFJ2" coef="1"/>
+      <joint joint="rh_MFJ1" coef="1"/>
+    </fixed>
+    <fixed name="rh_RFJ0">
+      <joint joint="rh_RFJ2" coef="1"/>
+      <joint joint="rh_RFJ1" coef="1"/>
+    </fixed>
+    <fixed name="rh_LFJ0">
+      <joint joint="rh_LFJ2" coef="1"/>
+      <joint joint="rh_LFJ1" coef="1"/>
+    </fixed>
+  </tendon>
+
+</mujoco>
